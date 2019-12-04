@@ -31,6 +31,7 @@ const UserProductsScreen = props => {
 
   return (
     <FlatList
+      showsVerticalScrollIndicator={false}
       data={userProducts}
       keyExtractor={item => item.id}
       renderItem={itemData => (

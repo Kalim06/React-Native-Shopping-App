@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, FlatList, Button, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, FlatList, Button, StyleSheet, ActivityIndicator } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
 import MyColors from "../../constants/MyColors";
@@ -9,6 +9,8 @@ import * as cartActions from "../../store/actions/cart";
 import * as ordersActions from "../../store/actions/orders";
 
 const CartScreen = props => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const cartTotalAmount = useSelector(state => state.cart.totalAmount);
   const cartItems = useSelector(state => {
     const transformedCartItems = [];
@@ -23,7 +25,14 @@ const CartScreen = props => {
     }
     return transformedCartItems.sort((a, b) => (a.productId > b.productId ? 1 : -1));
   });
+
   const dispatch = useDispatch();
+
+  const sendOrderHandler = async () => {
+    setIsLoading(true);
+    await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
+    setIsLoading(false);
+  };
 
   return (
     <View style={styles.screen}>
@@ -32,16 +41,19 @@ const CartScreen = props => {
           Total:{" "}
           <Text style={styles.amount}>${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}</Text>
         </Text>
-        <Button
-          color={MyColors.accent}
-          title="Order Now"
-          disabled={cartItems.length === 0}
-          onPress={() => {
-            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
-          }}
-        />
+        {isLoading ? (
+          <ActivityIndicator size="small" color={MyColors.accent} />
+        ) : (
+          <Button
+            color={MyColors.accent}
+            title="Order Now"
+            disabled={cartItems.length === 0}
+            onPress={sendOrderHandler}
+          />
+        )}
       </Card>
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={cartItems}
         keyExtractor={item => item.productId}
         renderItem={itemData => (

@@ -137,9 +137,7 @@ const AuthScreen = props => {
               )}
             </View>
             <Button
-              title={
-                isSignUp ? "Already have an account. Log In" : "Don't have an account? Sign up"
-              }
+              title={isSignUp ? "Already have an account" : "Don't have an account."}
               color={MyColors.primary}
               onPress={() => {
                 setSignUp(prevState => !prevState);
@@ -153,7 +151,7 @@ const AuthScreen = props => {
 };
 
 AuthScreen.navigationOptions = {
-  headerTitle: "Authenticate"
+  headerTitle: "Shopping App"
 };
 
 const styles = StyleSheet.create({
